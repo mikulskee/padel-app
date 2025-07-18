@@ -1,4 +1,5 @@
 import { Match } from "@/types/match";
+import Image from "next/image";
 
 type PlayerStats = {
   name: string;
@@ -84,7 +85,17 @@ export default async function Home() {
         }}
       >
         <h1 style={{ marginBottom: 0 }}>🏆 Padwell 🏆</h1>
-        <h6>powered by Transwell</h6>
+        <h6
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.1rem",
+          }}
+        >
+          powered by{" "}
+          <Image src="/transwell.png" alt="Transwell" width={60} height={15} />
+        </h6>
       </div>
 
       <h3 style={{ marginBottom: "0.5rem" }}>👤 Tabela zawodników</h3>
