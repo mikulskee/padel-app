@@ -6,6 +6,7 @@ type PlayerStats = {
   wins: number;
   losses: number;
   points: number;
+  matches: number;
 };
 
 const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
@@ -20,10 +21,18 @@ const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
       const isWinner = team === winner;
       for (const player of match.players[team]) {
         if (!statsMap[player]) {
-          statsMap[player] = { name: player, wins: 0, losses: 0, points: 0 };
+          statsMap[player] = {
+            name: player,
+            wins: 0,
+            losses: 0,
+            points: 0,
+            matches: 0,
+          };
         }
 
+        statsMap[player].matches += 1;
         statsMap[player].points += match.score[team] * 100;
+
         if (isWinner) {
           statsMap[player].wins += 1;
           statsMap[player].points += 200;
@@ -105,22 +114,24 @@ export default async function Home() {
         style={{ marginBottom: "2rem", fontSize: "0.8rem" }}
       >
         <thead>
-          <tr>
+          <tr className="bg-gray-200">
             <th>Lp</th>
             <th>Gracz</th>
+            <th>Mecze</th>
             <th>Zwycięstwa</th>
             <th>Porażki</th>
             <th>Punkty</th>
           </tr>
         </thead>
         <tbody>
-          {playerStats.map((p, i) => (
-            <tr key={p.name}>
-              <td>{i + 1}</td>
-              <td>{p.name}</td>
-              <td>{p.wins}</td>
-              <td>{p.losses}</td>
-              <td>{p.points}</td>
+          {playerStats.map((player, index) => (
+            <tr key={player.name}>
+              <td>{index + 1}</td>
+              <td>{player.name}</td>
+              <td>{player.matches}</td>
+              <td>{player.wins}</td>
+              <td>{player.losses}</td>
+              <td>{player.points}</td>
             </tr>
           ))}
         </tbody>
