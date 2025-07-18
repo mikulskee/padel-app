@@ -155,18 +155,16 @@ export default async function Home() {
           >
             <thead>
               <tr>
-                <th>Lp</th>
-                <th>Data</th>
-                <th>Drużyna 1</th>
+                <th style={{ width: "5%" }}>Lp</th>
+                <th style={{ width: "40%" }}>Drużyna 1</th>
                 <th>Wynik</th>
-                <th>Drużyna 2</th>
+                <th style={{ width: "40%" }}>Drużyna 2</th>
               </tr>
             </thead>
             <tbody>
               {matches.map((match, i) => (
                 <tr key={match.id}>
                   <td>{i + 1}</td>
-                  <td>{match.date}</td>
                   <td>
                     {match.players["1"].map((player, index, arr) => (
                       <span key={player}>
