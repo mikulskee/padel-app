@@ -37,9 +37,10 @@ const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
 };
 
 export default async function Home() {
-  const res = await fetch("http://localhost:3000/api/matches", {
-    next: { revalidate: 0 }, // możesz użyć 3600 jeśli chcesz cache
+  const res = await fetch("/api/matches", {
+    cache: "no-store",
   });
+
   const data = await res.json();
   const matches: Match[] = data.matches;
   const playerStats = calculatePlayerStats(matches);
