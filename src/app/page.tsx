@@ -59,6 +59,8 @@ export default async function Home() {
         padding: "2rem",
         display: "flex",
         flexDirection: "column",
+        margin: "0 auto",
+        maxWidth: "800px",
       }}
     >
       <div
