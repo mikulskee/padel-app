@@ -45,9 +45,31 @@ export default async function Home() {
   const playerStats = calculatePlayerStats(matches);
 
   return (
-    <main style={{ padding: "2rem" }}>
-      <h1>👤 Tabela zawodników</h1>
-      <table border={1} cellPadding={5} style={{ marginBottom: "2rem" }}>
+    <main
+      style={{
+        padding: "2rem",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginBottom: "2rem",
+        }}
+      >
+        <h1 style={{ marginBottom: 0 }}>🏆 Padwell 🏆</h1>
+        <h6>powered by Transwell</h6>
+      </div>
+
+      <h3>👤 Tabela zawodników</h3>
+      <table
+        border={1}
+        cellPadding={5}
+        style={{ marginBottom: "2rem", fontSize: "0.8rem" }}
+      >
         <thead>
           <tr>
             <th>Lp</th>
@@ -69,8 +91,8 @@ export default async function Home() {
           ))}
         </tbody>
       </table>
-      <h1>🏓 Tabela meczów</h1>
-      <table border={1} cellPadding={5}>
+      <h3>🏓 Tabela meczów</h3>
+      <table border={1} cellPadding={5} style={{ fontSize: "0.8rem" }}>
         <thead>
           <tr>
             <th>Lp</th>
@@ -85,11 +107,27 @@ export default async function Home() {
             <tr key={match.id}>
               <td>{i + 1}</td>
               <td>{match.date}</td>
-              <td>{match.players["1"].join(", ")}</td>
               <td>
+                {match.players["1"].map((player, index, arr) => (
+                  <span key={player}>
+                    {player}
+                    {index < arr.length - 1 ? ", " : ""}
+                    <br />
+                  </span>
+                ))}
+              </td>
+              <td style={{ textAlign: "center" }}>
                 {match.score["1"]} : {match.score["2"]}
               </td>
-              <td>{match.players["2"].join(", ")}</td>
+              <td>
+                {match.players["2"].map((player, index, arr) => (
+                  <span key={player}>
+                    {player}
+                    {index < arr.length - 1 ? ", " : ""}
+                    <br />
+                  </span>
+                ))}
+              </td>
             </tr>
           ))}
         </tbody>
