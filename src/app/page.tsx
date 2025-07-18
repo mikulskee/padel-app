@@ -75,7 +75,7 @@ export default async function Home() {
         <h6>powered by Transwell</h6>
       </div>
 
-      <h3>👤 Tabela zawodników</h3>
+      <h3 style={{ marginBottom: "0.5rem" }}>👤 Tabela zawodników</h3>
       <table
         border={1}
         cellPadding={5}
@@ -102,7 +102,7 @@ export default async function Home() {
           ))}
         </tbody>
       </table>
-      <h3>🏓 Tabela meczów</h3>
+      <h3 style={{ marginBottom: "0.5rem" }}>🏓 Tabela meczów</h3>
       <table border={1} cellPadding={5} style={{ fontSize: "0.8rem" }}>
         <thead>
           <tr>
