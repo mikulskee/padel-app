@@ -1,0 +1,40 @@
+{
+  "matches": [
+    {
+      "date": "2025-07-18",
+      "id": "match-001",
+      "score": {
+        "1": 2,
+        "2": 1
+      },
+      "players": {
+        "1": ["K. Kyrcz", "D. Kyrcz"],
+        "2": ["M. Wasilewski", "M. Blaza"]
+      }
+    },
+    {
+      "date": "2025-07-18",
+      "id": "match-002",
+      "score": {
+        "1": 2,
+        "2": 0
+      },
+      "players": {
+        "1": ["K. Kyrcz", "D. Kyrcz"],
+        "2": ["M. Wasilewski", "M. Blaza"]
+      }
+    },
+    {
+      "date": "2025-07-18",
+      "id": "match-003",
+      "score": {
+        "1": 0,
+        "2": 2
+      },
+      "players": {
+        "1": ["K. Kyrcz", "D. Kyrcz"],
+        "2": ["M. Wasilewski", "M. Blaza"]
+      }
+    }
+  ]
+}
