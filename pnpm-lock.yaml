@@ -24,6 +24,9 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3
         version: 3.3.1
+      '@netlify/plugin-nextjs':
+        specifier: ^5.11.6
+        version: 5.11.6
       '@types/node':
         specifier: ^20
         version: 20.19.8
@@ -242,6 +245,10 @@ packages:
     engines: {node: '>=12.0.0'}
     peerDependencies:
       next: '>=12.2.0'
+
+  '@netlify/plugin-nextjs@5.11.6':
+    resolution: {integrity: sha512-F+HiQaUpISBmooALpwDULoCCwUhI6MugEEBstjuxOL2rh2ROFhK4abv87f4GxVXRSmw0AtXAp2eiP8vHcZ3NKQ==}
+    engines: {node: '>=18.0.0'}
 
   '@next/env@15.4.1':
     resolution: {integrity: sha512-DXQwFGAE2VH+f2TJsKepRXpODPU+scf5fDbKOME8MMyeyswe4XwgRdiiIYmBfkXU+2ssliLYznajTrOQdnLR5A==}
@@ -1744,6 +1751,8 @@ snapshots:
   '@netlify/next@1.4.9(next@15.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))':
     dependencies:
       next: 15.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+
+  '@netlify/plugin-nextjs@5.11.6': {}
 
   '@next/env@15.4.1': {}
 
