@@ -51,6 +51,18 @@ export default async function Home() {
   const data = await res.json();
   const matches: Match[] = data.matches;
 
+  const groupedMatches = matches.reduce<Record<string, Match[]>>(
+    (acc, match) => {
+      if (!acc[match.date]) acc[match.date] = [];
+      acc[match.date].push(match);
+      return acc;
+    },
+    {}
+  );
+
+  const sortedDates = Object.keys(groupedMatches).sort(
+    (a, b) => new Date(b).getTime() - new Date(a).getTime()
+  );
   const playerStats = calculatePlayerStats(matches);
 
   return (
@@ -103,46 +115,63 @@ export default async function Home() {
         </tbody>
       </table>
       <h3 style={{ marginBottom: "0.5rem" }}>🏓 Tabela meczów</h3>
-      <table border={1} cellPadding={5} style={{ fontSize: "0.8rem" }}>
-        <thead>
-          <tr>
-            <th>Lp</th>
-            <th>Data</th>
-            <th>Drużyna 1</th>
-            <th>Wynik</th>
-            <th>Drużyna 2</th>
-          </tr>
-        </thead>
-        <tbody>
-          {matches.map((match, i) => (
-            <tr key={match.id}>
-              <td>{i + 1}</td>
-              <td>{match.date}</td>
-              <td>
-                {match.players["1"].map((player, index, arr) => (
-                  <span key={player}>
-                    {player}
-                    {index < arr.length - 1 ? ", " : ""}
-                    <br />
-                  </span>
-                ))}
-              </td>
-              <td style={{ textAlign: "center" }}>
-                {match.score["1"]} : {match.score["2"]}
-              </td>
-              <td>
-                {match.players["2"].map((player, index, arr) => (
-                  <span key={player}>
-                    {player}
-                    {index < arr.length - 1 ? ", " : ""}
-                    <br />
-                  </span>
-                ))}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      {sortedDates.map((date, index) => (
+        <details
+          key={date}
+          className="mb-4 border border-gray-400 rounded w-full"
+          open={index === 0}
+          style={{ marginBottom: "0.5rem" }}
+        >
+          <summary className="cursor-pointer px-4 py-2 bg-gray-100 font-bold">
+            {date}
+          </summary>
+          <table
+            border={1}
+            cellPadding={5}
+            style={{ fontSize: "0.8rem", width: "100%" }}
+          >
+            <thead>
+              <tr>
+                <th>Lp</th>
+                <th>Data</th>
+                <th>Drużyna 1</th>
+                <th>Wynik</th>
+                <th>Drużyna 2</th>
+              </tr>
+            </thead>
+            <tbody>
+              {matches.map((match, i) => (
+                <tr key={match.id}>
+                  <td>{i + 1}</td>
+                  <td>{match.date}</td>
+                  <td>
+                    {match.players["1"].map((player, index, arr) => (
+                      <span key={player}>
+                        {player}
+                        {index < arr.length - 1 ? ", " : ""}
+                        <br />
+                      </span>
+                    ))}
+                  </td>
+                  <td style={{ textAlign: "center" }}>
+                    {match.score["1"]} : {match.score["2"]}
+                  </td>
+                  <td>
+                    {match.players["2"].map((player, index, arr) => (
+                      <span key={player}>
+                        {player}
+                        {index < arr.length - 1 ? ", " : ""}
+                        <br />
+                      </span>
+                    ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </details>
+      ))}
     </main>
   );
 }
