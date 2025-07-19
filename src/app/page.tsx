@@ -135,7 +135,7 @@ export default async function Home() {
   return (
     <main
       style={{
-        padding: "2rem",
+        padding: "2rem 1rem",
         display: "flex",
         flexDirection: "column",
         margin: "0 auto",
