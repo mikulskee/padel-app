@@ -225,7 +225,7 @@ export default async function Home() {
         </tbody>
       </table>
 
-      <h3 style={{ marginBottom: "0.5rem" }}>🏓 Tabela meczów</h3>
+      <h3 style={{ marginBottom: "0.5rem" }}>🎾 Wyniki meczów</h3>
 
       {sortedDates.map((date, index) => (
         <details
