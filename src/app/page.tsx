@@ -1,25 +1,50 @@
 import { Match } from "@/types/match";
 import Image from "next/image";
 
-type PlayerStats = {
-  name: string;
-  wins: number;
-  losses: number;
-  points: number;
-  matches: number;
-};
-
 const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
   const statsMap: Record<string, PlayerStats> = {};
 
   matches.forEach((match) => {
     const score1 = match.score["1"];
     const score2 = match.score["2"];
-    const winner = score1 > score2 ? "1" : "2";
 
-    for (const team of ["1", "2"]) {
-      const isWinner = team === winner;
-      for (const player of match.players[team]) {
+    const resultKey = `${score1}:${score2}`;
+    const reverseKey = `${score2}:${score1}`;
+
+    const pointsMap: Record<string, { win: number; lose: number }> = {
+      "2:0": { win: 25, lose: 5 },
+      "2:1": { win: 20, lose: 10 },
+      "1:2": { win: 10, lose: 20 },
+      "0:2": { win: 5, lose: 25 },
+    };
+
+    const isTeam1Winner = score1 > score2;
+    const team1Players = match.players["1"];
+    const team2Players = match.players["2"];
+
+    const sets = {
+      "1": score1,
+      "2": score2,
+    };
+
+    const getPoints = () => {
+      const key = pointsMap[resultKey]
+        ? resultKey
+        : pointsMap[reverseKey]
+        ? reverseKey
+        : null;
+      return key ? pointsMap[key] : { win: 0, lose: 0 };
+    };
+
+    const { win, lose } = getPoints();
+
+    const awardPoints = (
+      players: string[],
+      isWinner: boolean,
+      teamKey: "1" | "2"
+    ) => {
+      const opponentKey = teamKey === "1" ? "2" : "1";
+      for (const player of players) {
         if (!statsMap[player]) {
           statsMap[player] = {
             name: player,
@@ -27,20 +52,27 @@ const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
             losses: 0,
             points: 0,
             matches: 0,
+            setsWon: 0,
+            setsLost: 0,
           };
         }
 
         statsMap[player].matches += 1;
-        statsMap[player].points += match.score[team] * 100;
+        statsMap[player].points += isWinner ? win : lose;
 
         if (isWinner) {
           statsMap[player].wins += 1;
-          statsMap[player].points += 200;
         } else {
           statsMap[player].losses += 1;
         }
+
+        statsMap[player].setsWon += sets[teamKey];
+        statsMap[player].setsLost += sets[opponentKey];
       }
-    }
+    };
+
+    awardPoints(team1Players, isTeam1Winner, "1");
+    awardPoints(team2Players, !isTeam1Winner, "2");
   });
 
   return Object.values(statsMap).sort((a, b) => b.points - a.points);
@@ -51,7 +83,7 @@ const calculateTeamStats = (matches: Match[]): TeamStats[] => {
 
   matches.forEach((match) => {
     for (const teamKey of ["1", "2"] as const) {
-      const players = [...match.players[teamKey]].sort();
+      const players = [...match.players[teamKey]].sort(); // porządek alfabetyczny
       const teamId = players.join(" & ");
       const teamName = players.map((player, index, arr) => (
         <span key={player}>
@@ -60,18 +92,8 @@ const calculateTeamStats = (matches: Match[]): TeamStats[] => {
           <br />
         </span>
       ));
-
-      {
-        match.players["1"].map((player, index, arr) => (
-          <span key={player}>
-            {player}
-            {index < arr.length - 1 ? ", " : ""}
-            <br />
-          </span>
-        ));
-      }
-      const isWinner =
-        match.score[teamKey] > match.score[teamKey === "1" ? "2" : "1"];
+      const opponentKey = teamKey === "1" ? "2" : "1";
+      const isWinner = match.score[teamKey] > match.score[opponentKey];
 
       if (!teamMap[teamId]) {
         teamMap[teamId] = {
@@ -81,10 +103,15 @@ const calculateTeamStats = (matches: Match[]): TeamStats[] => {
           losses: 0,
           matches: 0,
           winRate: 0,
+          setsWon: 0,
+          setsLost: 0,
         };
       }
 
       teamMap[teamId].matches += 1;
+      teamMap[teamId].setsWon += match.score[teamKey];
+      teamMap[teamId].setsLost += match.score[opponentKey];
+
       if (isWinner) {
         teamMap[teamId].wins += 1;
       } else {
@@ -94,7 +121,8 @@ const calculateTeamStats = (matches: Match[]): TeamStats[] => {
   });
 
   for (const team of Object.values(teamMap)) {
-    team.winRate = Math.round((team.wins / team.matches) * 100);
+    team.winRate =
+      team.matches > 0 ? Math.round((team.wins / team.matches) * 100) : 0;
   }
 
   return Object.values(teamMap).sort(
@@ -168,31 +196,44 @@ export default async function Home() {
       <table
         border={1}
         cellPadding={5}
-        style={{ marginBottom: "2rem", fontSize: "0.8rem" }}
+        style={{ marginBottom: "0.2rem", fontSize: "0.8rem" }}
       >
         <thead>
           <tr className="bg-gray-200">
-            <th>Lp</th>
+            <th style={{ width: "5%" }}>Lp</th>
             <th>Gracz</th>
-            <th>Mecze</th>
-            <th>Wygrane</th>
-            <th>Porażki</th>
-            <th>Punkty</th>
+            <th style={{ width: "12%" }}>M.</th>
+            <th style={{ width: "12%" }}>W.</th>
+            <th style={{ width: "12%" }}>Sety</th>
+            <th style={{ width: "12%" }}>Pkt</th>
           </tr>
         </thead>
         <tbody>
           {playerStats.map((player, index) => (
             <tr key={player.name}>
-              <td>{index + 1}</td>
+              <td style={{ textAlign: "center" }}>{index + 1}</td>
               <td>{player.name}</td>
               <td style={{ textAlign: "center" }}>{player.matches}</td>
               <td style={{ textAlign: "center" }}>{player.wins}</td>
-              <td style={{ textAlign: "center" }}>{player.losses}</td>
+              <td style={{ textAlign: "center" }}>
+                {player.setsWon} : {player.setsLost}
+              </td>
               <td style={{ textAlign: "center" }}>{player.points}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      <p
+        style={{
+          marginBottom: "1.4rem",
+          fontSize: "0.5rem",
+          fontStyle: "italic",
+          color: "#8a8a8a",
+        }}
+      >
+        Punktacja: 2:0 - 25.00 pkt | 2:1 - 20.00 pkt | 1:2 - 10.00 pkt | 0:2 -
+        5.00 pkt.
+      </p>
 
       <h3 style={{ marginBottom: "0.5rem" }}>🙎‍♂️🙎‍♂️ Tabela drużyn</h3>
       <table
@@ -202,22 +243,24 @@ export default async function Home() {
       >
         <thead>
           <tr>
-            <th>Lp</th>
+            <th style={{ width: "5%" }}>Lp</th>
             <th>Drużyna</th>
-            <th>Mecze</th>
-            <th>Wygrane</th>
-            <th>Porażki</th>
-            <th>% zwycięstw</th>
+            <th style={{ width: "12%" }}>M.</th>
+            <th style={{ width: "12%" }}>W.</th>
+            <th style={{ width: "12%" }}>Sety</th>
+            <th style={{ width: "12%" }}>W%</th>
           </tr>
         </thead>
         <tbody>
           {teamStats.map((team, index) => (
             <tr key={team.team}>
-              <td>{index + 1}</td>
+              <td style={{ textAlign: "center" }}>{index + 1}</td>
               <td>{team.name}</td>
               <td style={{ textAlign: "center" }}>{team.matches}</td>
               <td style={{ textAlign: "center" }}>{team.wins}</td>
-              <td style={{ textAlign: "center" }}>{team.losses}</td>
+              <td style={{ textAlign: "center" }}>
+                {team.setsWon} : {team.setsLost}
+              </td>
               <td style={{ textAlign: "center" }}>{team.winRate}%</td>
             </tr>
           ))}
@@ -233,7 +276,7 @@ export default async function Home() {
           open={index === 0}
           style={{ marginBottom: "0.5rem" }}
         >
-          <summary style={{ padding: "0.5rem 0", cursor: "pointer" }}>
+          <summary style={{ padding: "0 0 0.5rem", cursor: "pointer" }}>
             {date}
           </summary>
           <table

@@ -1,10 +1,9 @@
-type TeamStats = {
-  team: string;
-  name: React.ReactNode;
+type PlayerStats = {
+  name: string;
   wins: number;
   losses: number;
+  points: number;
   matches: number;
-  winRate: number;
   setsWon: number;
   setsLost: number;
 };
