@@ -46,6 +46,63 @@ const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
   return Object.values(statsMap).sort((a, b) => b.points - a.points);
 };
 
+const calculateTeamStats = (matches: Match[]): TeamStats[] => {
+  const teamMap: Record<string, TeamStats> = {};
+
+  matches.forEach((match) => {
+    for (const teamKey of ["1", "2"] as const) {
+      const players = [...match.players[teamKey]].sort();
+      const teamId = players.join(" & ");
+      const teamName = players.map((player, index, arr) => (
+        <span key={player}>
+          {player}
+          {index < arr.length - 1 ? ", " : ""}
+          <br />
+        </span>
+      ));
+
+      {
+        match.players["1"].map((player, index, arr) => (
+          <span key={player}>
+            {player}
+            {index < arr.length - 1 ? ", " : ""}
+            <br />
+          </span>
+        ));
+      }
+      const isWinner =
+        match.score[teamKey] > match.score[teamKey === "1" ? "2" : "1"];
+
+      if (!teamMap[teamId]) {
+        teamMap[teamId] = {
+          team: teamId,
+          name: teamName,
+          wins: 0,
+          losses: 0,
+          matches: 0,
+          winRate: 0,
+        };
+      }
+
+      teamMap[teamId].matches += 1;
+      if (isWinner) {
+        teamMap[teamId].wins += 1;
+      } else {
+        teamMap[teamId].losses += 1;
+      }
+    }
+  });
+
+  // Oblicz winRate
+  for (const team of Object.values(teamMap)) {
+    team.winRate = Math.round((team.wins / team.matches) * 100);
+  }
+
+  return Object.values(teamMap).sort(
+    (a, b) => b.winRate - a.winRate || b.matches - a.matches
+  );
+};
+
 export default async function Home() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/api/matches`,
@@ -74,6 +131,7 @@ export default async function Home() {
     (a, b) => new Date(b).getTime() - new Date(a).getTime()
   );
   const playerStats = calculatePlayerStats(matches);
+  const teamStats = calculateTeamStats(matches);
 
   return (
     <main
@@ -118,7 +176,7 @@ export default async function Home() {
             <th>Lp</th>
             <th>Gracz</th>
             <th>Mecze</th>
-            <th>Zwycięstwa</th>
+            <th>Wygrane</th>
             <th>Porażki</th>
             <th>Punkty</th>
           </tr>
@@ -128,14 +186,45 @@ export default async function Home() {
             <tr key={player.name}>
               <td>{index + 1}</td>
               <td>{player.name}</td>
-              <td>{player.matches}</td>
-              <td>{player.wins}</td>
-              <td>{player.losses}</td>
-              <td>{player.points}</td>
+              <td style={{ textAlign: "center" }}>{player.matches}</td>
+              <td style={{ textAlign: "center" }}>{player.wins}</td>
+              <td style={{ textAlign: "center" }}>{player.losses}</td>
+              <td style={{ textAlign: "center" }}>{player.points}</td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      <h3 style={{ marginBottom: "0.5rem" }}>🙎‍♂️🙎‍♂️ Tabela drużyn</h3>
+      <table
+        border={1}
+        cellPadding={5}
+        style={{ marginBottom: "2rem", fontSize: "0.8rem" }}
+      >
+        <thead>
+          <tr>
+            <th>Lp</th>
+            <th>Drużyna</th>
+            <th>Mecze</th>
+            <th>Wygrane</th>
+            <th>Porażki</th>
+            <th>% zwycięstw</th>
+          </tr>
+        </thead>
+        <tbody>
+          {teamStats.map((team, index) => (
+            <tr key={team.team}>
+              <td>{index + 1}</td>
+              <td>{team.name}</td>
+              <td style={{ textAlign: "center" }}>{team.matches}</td>
+              <td style={{ textAlign: "center" }}>{team.wins}</td>
+              <td style={{ textAlign: "center" }}>{team.losses}</td>
+              <td style={{ textAlign: "center" }}>{team.winRate}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
       <h3 style={{ marginBottom: "0.5rem" }}>🏓 Tabela meczów</h3>
 
       {sortedDates.map((date, index) => (
@@ -145,7 +234,7 @@ export default async function Home() {
           open={index === 0}
           style={{ marginBottom: "0.5rem" }}
         >
-          <summary className="cursor-pointer px-4 py-2 bg-gray-100 font-bold">
+          <summary style={{ padding: "0.5rem 0", cursor: "pointer" }}>
             {date}
           </summary>
           <table
@@ -166,25 +255,29 @@ export default async function Home() {
                 <tr key={match.id}>
                   <td>{i + 1}</td>
                   <td>
-                    {match.players["1"].map((player, index, arr) => (
-                      <span key={player}>
-                        {player}
-                        {index < arr.length - 1 ? ", " : ""}
-                        <br />
-                      </span>
-                    ))}
+                    {[...match.players["1"]]
+                      .sort((a, b) => a.localeCompare(b))
+                      .map((player, index, arr) => (
+                        <span key={player}>
+                          {player}
+                          {index < arr.length - 1 ? ", " : ""}
+                          <br />
+                        </span>
+                      ))}
                   </td>
                   <td style={{ textAlign: "center" }}>
                     {match.score["1"]} : {match.score["2"]}
                   </td>
                   <td>
-                    {match.players["2"].map((player, index, arr) => (
-                      <span key={player}>
-                        {player}
-                        {index < arr.length - 1 ? ", " : ""}
-                        <br />
-                      </span>
-                    ))}
+                    {[...match.players["2"]]
+                      .sort((a, b) => a.localeCompare(b))
+                      .map((player, index, arr) => (
+                        <span key={player}>
+                          {player}
+                          {index < arr.length - 1 ? ", " : ""}
+                          <br />
+                        </span>
+                      ))}
                   </td>
                 </tr>
               ))}
