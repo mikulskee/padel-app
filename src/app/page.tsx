@@ -93,7 +93,6 @@ const calculateTeamStats = (matches: Match[]): TeamStats[] => {
     }
   });
 
-  // Oblicz winRate
   for (const team of Object.values(teamMap)) {
     team.winRate = Math.round((team.wins / team.matches) * 100);
   }
