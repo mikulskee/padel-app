@@ -293,36 +293,38 @@ export default async function Home() {
               </tr>
             </thead>
             <tbody>
-              {matches.map((match, i) => (
-                <tr key={match.id}>
-                  <td>{i + 1}</td>
-                  <td>
-                    {[...match.players["1"]]
-                      .sort((a, b) => a.localeCompare(b))
-                      .map((player, index, arr) => (
-                        <span key={player}>
-                          {player}
-                          {index < arr.length - 1 ? ", " : ""}
-                          <br />
-                        </span>
-                      ))}
-                  </td>
-                  <td style={{ textAlign: "center" }}>
-                    {match.score["1"]} : {match.score["2"]}
-                  </td>
-                  <td>
-                    {[...match.players["2"]]
-                      .sort((a, b) => a.localeCompare(b))
-                      .map((player, index, arr) => (
-                        <span key={player}>
-                          {player}
-                          {index < arr.length - 1 ? ", " : ""}
-                          <br />
-                        </span>
-                      ))}
-                  </td>
-                </tr>
-              ))}
+              {matches
+                .filter((match) => match.date === date)
+                .map((match, i) => (
+                  <tr key={match.id}>
+                    <td>{i + 1}</td>
+                    <td>
+                      {[...match.players["1"]]
+                        .sort((a, b) => a.localeCompare(b))
+                        .map((player, index, arr) => (
+                          <span key={player}>
+                            {player}
+                            {index < arr.length - 1 ? ", " : ""}
+                            <br />
+                          </span>
+                        ))}
+                    </td>
+                    <td style={{ textAlign: "center" }}>
+                      {match.score["1"]} : {match.score["2"]}
+                    </td>
+                    <td>
+                      {[...match.players["2"]]
+                        .sort((a, b) => a.localeCompare(b))
+                        .map((player, index, arr) => (
+                          <span key={player}>
+                            {player}
+                            {index < arr.length - 1 ? ", " : ""}
+                            <br />
+                          </span>
+                        ))}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </details>
