@@ -215,7 +215,18 @@ export default async function Home() {
           }}
         >
           powered by{" "}
-          <Image src="/transwell.png" alt="Transwell" width={60} height={15} />
+          <a
+            href="https://transwell.pl"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src="/transwell.png"
+              alt="Transwell"
+              width={60}
+              height={15}
+            />
+          </a>
         </h6>
       </div>
 
