@@ -130,7 +130,34 @@ const calculateTeamStats = (matches: Match[]): TeamStats[] => {
   );
 };
 
+const getLastModifiedDate = async (): Promise<string | null> => {
+  const GITHUB_REPO = "mikulskee/padel-app";
+  const FILE_PATH = "src/data/matches.json";
+
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB_REPO}/commits?path=${FILE_PATH}&per_page=1`
+  );
+
+  if (!res.ok) return null;
+
+  const data = await res.json();
+  const date = data?.[0]?.commit?.author?.date;
+
+  if (!date) return null;
+
+  return new Date(date).toLocaleDateString("pl-PL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Warsaw",
+  });
+};
+
 export default async function Home() {
+  const lastModified = await getLastModifiedDate();
+
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/api/matches`,
     {
@@ -223,6 +250,15 @@ export default async function Home() {
           ))}
         </tbody>
       </table>
+      <p
+        style={{
+          fontSize: "0.5rem",
+          fontStyle: "italic",
+          color: "#8a8a8a",
+        }}
+      >
+        Zaktualizowano {lastModified || "brak danych"}.
+      </p>
       <p
         style={{
           marginBottom: "1.4rem",
