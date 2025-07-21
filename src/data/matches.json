@@ -35,6 +35,18 @@
         "1": ["M. Wasilewski", "K. Kyrcz"],
         "2": ["M. Mikulski", "D. Kyrcz"]
       }
+    },
+    {
+      "date": "2025-07-21",
+      "id": "match-003",
+      "score": {
+        "1": 2,
+        "2": 0
+      },
+      "players": {
+        "1": ["D. Kyrcz", "M. Blaza"],
+        "2": ["M. Mikulski", "K. Kyrcz"]
+      }
     }
   ]
 }
