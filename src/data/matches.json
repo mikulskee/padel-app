@@ -38,7 +38,7 @@
     },
     {
       "date": "2025-07-21",
-      "id": "match-003",
+      "id": "match-004",
       "score": {
         "1": 2,
         "2": 0
@@ -46,6 +46,18 @@
       "players": {
         "1": ["D. Kyrcz", "M. Blaza"],
         "2": ["M. Mikulski", "K. Kyrcz"]
+      }
+    },
+    {
+      "date": "2025-07-21",
+      "id": "match-005",
+      "score": {
+        "1": 2,
+        "2": 1
+      },
+      "players": {
+        "1": ["D. Kyrcz", "M. Mikulski"],
+        "2": ["M. Blaza", "K. Kyrcz"]
       }
     }
   ]
