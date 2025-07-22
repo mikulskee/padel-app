@@ -145,18 +145,22 @@ const getLastModifiedDate = async (): Promise<string | null> => {
 
   if (!date) return null;
 
-  const dateFormatted = new Date(date).toLocaleDateString("pl-PL", {
+  const localDate = new Date(date);
+
+  const dateFormatted = localDate.toLocaleDateString("pl-PL", {
     year: "numeric",
     month: "2-digit",
-    day: "numeric",
+    day: "2-digit",
+    timeZone: "Europe/Warsaw",
   });
 
-  const time = new Date(date).toLocaleTimeString("pl-PL", {
+  const time = localDate.toLocaleTimeString("pl-PL", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "Europe/Warsaw",
   });
 
-  return dateFormatted + " o godz. " + time;
+  return `${dateFormatted} o godz. ${time}`;
 };
 
 export default async function Home() {
