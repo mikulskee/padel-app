@@ -1,0 +1,173 @@
+import { Match } from "@/types/match";
+
+const getLastModifiedDate = async (): Promise<string | null> => {
+  const GITHUB_REPO = "mikulskee/padel-app";
+  const FILE_PATH = "src/data/matches.json";
+
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB_REPO}/commits?path=${FILE_PATH}&per_page=1`
+  );
+
+  if (!res.ok) return null;
+
+  const data = await res.json();
+  const date = data?.[0]?.commit?.author?.date;
+
+  if (!date) return null;
+
+  const localDate = new Date(date);
+
+  const dateFormatted = localDate.toLocaleDateString("pl-PL", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Europe/Warsaw",
+  });
+
+  const time = localDate.toLocaleTimeString("pl-PL", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Warsaw",
+  });
+
+  return `${dateFormatted} o godz. ${time}`;
+};
+
+const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
+  const statsMap: Record<string, PlayerStats> = {};
+
+  matches.forEach((match) => {
+    const score1 = match.score["1"];
+    const score2 = match.score["2"];
+
+    const resultKey = `${score1}:${score2}`;
+    const reverseKey = `${score2}:${score1}`;
+
+    const pointsMap: Record<string, { win: number; lose: number }> = {
+      "2:0": { win: 25, lose: 5 },
+      "2:1": { win: 20, lose: 10 },
+      "1:2": { win: 10, lose: 20 },
+      "0:2": { win: 5, lose: 25 },
+    };
+
+    const isTeam1Winner = score1 > score2;
+    const team1Players = match.players["1"];
+    const team2Players = match.players["2"];
+
+    const sets = {
+      "1": score1,
+      "2": score2,
+    };
+
+    const getPoints = () => {
+      const key = pointsMap[resultKey]
+        ? resultKey
+        : pointsMap[reverseKey]
+        ? reverseKey
+        : null;
+      return key ? pointsMap[key] : { win: 0, lose: 0 };
+    };
+
+    const { win, lose } = getPoints();
+
+    const awardPoints = (
+      players: string[],
+      isWinner: boolean,
+      teamKey: "1" | "2"
+    ) => {
+      const opponentKey = teamKey === "1" ? "2" : "1";
+      for (const player of players) {
+        if (!statsMap[player]) {
+          statsMap[player] = {
+            name: player,
+            wins: 0,
+            losses: 0,
+            points: 0,
+            matches: 0,
+            setsWon: 0,
+            setsLost: 0,
+          };
+        }
+
+        statsMap[player].matches += 1;
+        statsMap[player].points += isWinner ? win : lose;
+
+        if (isWinner) {
+          statsMap[player].wins += 1;
+        } else {
+          statsMap[player].losses += 1;
+        }
+
+        statsMap[player].setsWon += sets[teamKey];
+        statsMap[player].setsLost += sets[opponentKey];
+      }
+    };
+
+    awardPoints(team1Players, isTeam1Winner, "1");
+    awardPoints(team2Players, !isTeam1Winner, "2");
+  });
+
+  return Object.values(statsMap).sort((a, b) => b.points - a.points);
+};
+export async function UsersTable({ matches }: { matches: Match[] }) {
+  const lastModified = await getLastModifiedDate();
+  const playerStats = calculatePlayerStats(matches);
+
+  return (
+    <>
+      <h3 style={{ marginBottom: "0.5rem" }}>👤 Tabela zawodników</h3>
+      <table
+        border={1}
+        cellPadding={5}
+        style={{ marginBottom: "0.2rem", fontSize: "0.8rem" }}
+      >
+        <thead>
+          <tr className="bg-gray-200">
+            <th style={{ width: "5%" }}>Lp</th>
+            <th>Gracz</th>
+            <th style={{ width: "12%" }}>M.</th>
+            <th style={{ width: "12%" }}>W.</th>
+            <th style={{ width: "12%" }}>Sety</th>
+            <th style={{ width: "12%" }}>Pkt</th>
+          </tr>
+        </thead>
+        <tbody>
+          {playerStats.map((player, index) => (
+            <tr key={player.name}>
+              <td style={{ textAlign: "center" }}>{index + 1}</td>
+              <td>{player.name}</td>
+              <td style={{ textAlign: "center" }}>{player.matches}</td>
+              <td style={{ textAlign: "center" }}>{player.wins}</td>
+              <td style={{ textAlign: "center" }}>
+                {player.setsWon} : {player.setsLost}
+              </td>
+              <td style={{ textAlign: "center" }}>{player.points}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p
+        style={{
+          fontSize: "0.6rem",
+          fontStyle: "italic",
+          fontWeight: 700,
+          color: "#dfdfdf",
+        }}
+      >
+        Zaktualizowano - {lastModified || "brak danych"}.
+      </p>
+      <p
+        style={{
+          marginBottom: "1.4rem",
+          fontSize: "0.6rem",
+          fontStyle: "italic",
+          fontWeight: 700,
+          color: "#dfdfdf",
+        }}
+      >
+        Punktacja: 2:0 - 25.00 pkt | 2:1 - 20.00 pkt | 1:2 - 10.00 pkt | 0:2 -
+        5.00 pkt.
+      </p>
+    </>
+  );
+}
