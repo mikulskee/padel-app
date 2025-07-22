@@ -271,9 +271,10 @@ export default async function Home() {
       </table>
       <p
         style={{
-          fontSize: "0.5rem",
+          fontSize: "0.6rem",
           fontStyle: "italic",
-          color: "#8a8a8a",
+          fontWeight: 700,
+          color: "#dfdfdf",
         }}
       >
         Zaktualizowano - {lastModified || "brak danych"}.
@@ -281,9 +282,10 @@ export default async function Home() {
       <p
         style={{
           marginBottom: "1.4rem",
-          fontSize: "0.5rem",
+          fontSize: "0.6rem",
           fontStyle: "italic",
-          color: "#8a8a8a",
+          fontWeight: 700,
+          color: "#dfdfdf",
         }}
       >
         Punktacja: 2:0 - 25.00 pkt | 2:1 - 20.00 pkt | 1:2 - 10.00 pkt | 0:2 -
