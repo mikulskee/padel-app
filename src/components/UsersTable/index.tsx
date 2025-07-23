@@ -1,6 +1,9 @@
 import { Match } from "@/types/match";
 import Avatar from "../Avatar";
 import Link from "next/link";
+import { getPreviousMatchesFromGitHub } from "@/actions/getPreviousMatchesFromGithub";
+import Image from "next/image";
+import Up from "../Icons/up";
 
 const getLastModifiedDate = async (): Promise<string | null> => {
   const GITHUB_REPO = "mikulskee/padel-app";
@@ -111,9 +114,49 @@ export const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
 
   return Object.values(statsMap).sort((a, b) => b.points - a.points);
 };
+
+type PlayerStatsWithTrend = PlayerStats & {
+  trend?: "up" | "down" | "same";
+  positionChange?: number;
+};
 export async function UsersTable({ matches }: { matches: Match[] }) {
   const lastModified = await getLastModifiedDate();
   const playerStats = calculatePlayerStats(matches);
+  const previousMatches = await getPreviousMatchesFromGitHub();
+  const previousStats = previousMatches
+    ? calculatePlayerStats(previousMatches.matches)
+    : [];
+
+  const previousPositions = new Map<string, number>();
+
+  previousStats.forEach((player, index) => {
+    previousPositions.set(player.name, index);
+  });
+
+  const currentStatsWithTrend: PlayerStatsWithTrend[] = playerStats.map(
+    (player, index) => {
+      const prevIndex = previousPositions.get(player.name);
+
+      let trend: "up" | "down" | "same" | undefined = undefined;
+      let positionChange: number | undefined = undefined;
+
+      if (prevIndex === undefined) {
+        trend = undefined;
+      } else {
+        positionChange = prevIndex - index;
+
+        if (positionChange > 0) trend = "up";
+        else if (positionChange < 0) trend = "down";
+        else trend = "same";
+      }
+
+      return {
+        ...player,
+        trend,
+        positionChange,
+      };
+    }
+  );
 
   return (
     <>
@@ -134,7 +177,7 @@ export async function UsersTable({ matches }: { matches: Match[] }) {
           </tr>
         </thead>
         <tbody>
-          {playerStats.map((player, index) => {
+          {currentStatsWithTrend.map((player, index) => {
             const playerId = player.name.replace(". ", "").toLowerCase();
             return (
               <tr key={player.name}>
@@ -154,6 +197,17 @@ export async function UsersTable({ matches }: { matches: Match[] }) {
                     >
                       {player.name}
                     </Link>
+                    {player.trend === "up" && (
+                      <span style={{ color: "green" }}>
+                        <Up /> {`+${player.positionChange}`}
+                      </span>
+                    )}
+                    {player.trend === "down" && (
+                      <span style={{ color: "red" }}>
+                        <Up style={{ transform: "rotate(180deg)" }} />{" "}
+                        {`${player.positionChange}`}
+                      </span>
+                    )}
                   </div>
                 </td>
                 <td style={{ textAlign: "center" }}>{player.matches}</td>
