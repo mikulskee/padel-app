@@ -26,7 +26,13 @@ export default async function Home() {
           marginBottom: "2rem",
         }}
       >
-        <h1 style={{ marginBottom: 0 }}>🏆 Padwell 🏆</h1>
+        <Image
+          src="/logo.png"
+          height={110.3516}
+          width={250}
+          alt="logo"
+          style={{ marginBottom: "1rem" }}
+        />
         <h6
           style={{
             display: "flex",
