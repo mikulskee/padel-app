@@ -1,4 +1,6 @@
 import { Match } from "@/types/match";
+import Avatar from "../Avatar";
+import Link from "next/link";
 
 const getLastModifiedDate = async (): Promise<string | null> => {
   const GITHUB_REPO = "mikulskee/padel-app";
@@ -33,7 +35,7 @@ const getLastModifiedDate = async (): Promise<string | null> => {
   return `${dateFormatted} o godz. ${time}`;
 };
 
-const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
+export const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
   const statsMap: Record<string, PlayerStats> = {};
 
   matches.forEach((match) => {
@@ -132,18 +134,37 @@ export async function UsersTable({ matches }: { matches: Match[] }) {
           </tr>
         </thead>
         <tbody>
-          {playerStats.map((player, index) => (
-            <tr key={player.name}>
-              <td style={{ textAlign: "center" }}>{index + 1}</td>
-              <td>{player.name}</td>
-              <td style={{ textAlign: "center" }}>{player.matches}</td>
-              <td style={{ textAlign: "center" }}>{player.wins}</td>
-              <td style={{ textAlign: "center" }}>
-                {player.setsWon} : {player.setsLost}
-              </td>
-              <td style={{ textAlign: "center" }}>{player.points}</td>
-            </tr>
-          ))}
+          {playerStats.map((player, index) => {
+            const playerId = player.name.replace(". ", "").toLowerCase();
+            return (
+              <tr key={player.name}>
+                <td style={{ textAlign: "center" }}>{index + 1}</td>
+                <td>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    <Avatar filename={`${playerId}.png`} />
+                    <Link
+                      style={{ textDecoration: "underline", cursor: "pointer" }}
+                      href={`/players/${playerId}`}
+                    >
+                      {player.name}
+                    </Link>
+                  </div>
+                </td>
+                <td style={{ textAlign: "center" }}>{player.matches}</td>
+                <td style={{ textAlign: "center" }}>{player.wins}</td>
+                <td style={{ textAlign: "center" }}>
+                  {player.setsWon} : {player.setsLost}
+                </td>
+                <td style={{ textAlign: "center" }}>{player.points}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       <p

@@ -1,4 +1,5 @@
 import { fetchMatches } from "@/actions/fetchMatches";
+import Avatar from "@/components/Avatar";
 import ResultsTable from "@/components/ResultsTable";
 import TeamsTable from "@/components/TeamsTable";
 import { UsersTable } from "@/components/UsersTable";
