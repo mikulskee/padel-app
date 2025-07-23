@@ -59,6 +59,11 @@ export default async function PlayerPage({
           {matches
             .sort((match) => match.date.localeCompare(match.date))
             .reverse()
+            .filter(
+              (match) =>
+                match.players["1"].includes(playerName) ||
+                match.players["2"].includes(playerName)
+            )
             .map((match, i) => {
               const isPlayerInTeam1 = match.players["1"].includes(playerName);
               const isPlayerInTeam2 = match.players["2"].includes(playerName);
