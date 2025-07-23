@@ -1,5 +1,4 @@
 import { fetchMatches } from "@/actions/fetchMatches";
-import { fetchPlayers } from "@/actions/fetchPlayers";
 import Avatar from "@/components/Avatar";
 import { calculatePlayerStats } from "@/components/UsersTable";
 import { Fragment } from "react";
@@ -7,8 +6,9 @@ import { Fragment } from "react";
 export default async function PlayerPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const paramsValues = await params;
   const matches = await fetchMatches();
   function formatName(name: string): string {
     if (!name || name.length < 2) return name;
@@ -19,7 +19,7 @@ export default async function PlayerPage({
     return `${firstInitial}. ${formattedLastName}`;
   }
 
-  const playerName = formatName(params.id);
+  const playerName = formatName(paramsValues.id);
 
   const playerStats = calculatePlayerStats(matches);
 
@@ -27,13 +27,6 @@ export default async function PlayerPage({
     playerStats.findIndex(
       (player) => player.name.toLowerCase() === playerName.toLowerCase()
     ) + 1;
-
-  const playerMatches = matches.filter((match) => {
-    return (
-      match.players["1"].includes(playerName) ||
-      match.players["2"].includes(playerName)
-    );
-  });
 
   return (
     <main
@@ -53,7 +46,7 @@ export default async function PlayerPage({
           marginBottom: "1rem",
         }}
       >
-        <Avatar filename={`${params.id}.png`} size="medium" />
+        <Avatar filename={`${paramsValues.id}.png`} size="medium" />
         <div>
           <h1 style={{ fontSize: "1.4rem" }}>{playerName}</h1>
           <p style={{ fontSize: "1rem" }}>Ranking: {placeInRanking}</p>
