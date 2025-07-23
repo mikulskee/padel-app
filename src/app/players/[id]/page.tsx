@@ -101,8 +101,8 @@ export default async function PlayerPage({
               return (
                 <Fragment key={match.id}>
                   <tr>
-                    <td>{match.date}</td>
-                    <td>
+                    <td style={{ width: "20%" }}>{match.date}</td>
+                    <td style={{ width: "30%" }}>
                       {[...match.players["1"]]
                         .sort((a, b) => a.localeCompare(b))
                         .map((player, index, arr) => {
@@ -120,7 +120,7 @@ export default async function PlayerPage({
                           );
                         })}
                     </td>
-                    <td style={{ textAlign: "center" }}>
+                    <td style={{ textAlign: "center", width: "10%" }}>
                       <span
                         style={{
                           fontWeight: isPlayerInTeam1 ? "bold" : "normal",
@@ -137,7 +137,7 @@ export default async function PlayerPage({
                         {match.score["2"]}
                       </span>
                     </td>
-                    <td>
+                    <td style={{ textAlign: "right", width: "30%" }}>
                       {[...match.players["2"]]
                         .sort((a, b) => a.localeCompare(b))
                         .map((player, index, arr) => {
@@ -155,7 +155,7 @@ export default async function PlayerPage({
                           );
                         })}
                     </td>
-                    <td>
+                    <td style={{ textAlign: "right", width: "10%" }}>
                       {hasPlayerWon ? (
                         <span
                           style={{
@@ -165,6 +165,7 @@ export default async function PlayerPage({
                             backgroundColor: "green",
                             width: 20,
                             height: 20,
+                            marginLeft: "auto",
                           }}
                         >
                           Z
@@ -178,6 +179,7 @@ export default async function PlayerPage({
                             backgroundColor: "red",
                             width: 20,
                             height: 20,
+                            marginLeft: "auto",
                           }}
                         >
                           P
