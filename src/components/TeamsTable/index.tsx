@@ -1,4 +1,5 @@
 import { Match } from "@/types/match";
+import Avatar from "../Avatar";
 
 const calculateTeamStats = (matches: Match[]): TeamStats[] => {
   const teamMap: Record<string, TeamStats> = {};
@@ -7,13 +8,23 @@ const calculateTeamStats = (matches: Match[]): TeamStats[] => {
     for (const teamKey of ["1", "2"] as const) {
       const players = [...match.players[teamKey]].sort(); // porządek alfabetyczny
       const teamId = players.join(" & ");
-      const teamName = players.map((player, index, arr) => (
-        <span key={player}>
-          {player}
-          {index < arr.length - 1 ? ", " : ""}
-          <br />
-        </span>
-      ));
+      const teamName = players.map((player, index, arr) => {
+        const playerId = player.replace(". ", "").toLowerCase();
+
+        return (
+          <span
+            key={player}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
+            <Avatar filename={`${playerId}.png`} />
+            {player}
+          </span>
+        );
+      });
       const opponentKey = teamKey === "1" ? "2" : "1";
       const isWinner = match.score[teamKey] > match.score[opponentKey];
 
@@ -77,7 +88,16 @@ export default function TeamsTable({ matches }: { matches: Match[] }) {
           {teamStats.map((team, index) => (
             <tr key={team.team}>
               <td style={{ textAlign: "center" }}>{index + 1}</td>
-              <td>{team.name}</td>
+              <td>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {team.name}
+                </div>
+              </td>
               <td style={{ textAlign: "center" }}>{team.matches}</td>
               <td style={{ textAlign: "center" }}>{team.wins}</td>
               <td style={{ textAlign: "center" }}>
