@@ -26,19 +26,14 @@ export default async function Home() {
           marginBottom: "2rem",
         }}
       >
-        <Image
-          src="/logo.png"
-          height={110.3516}
-          width={250}
-          alt="logo"
-          style={{ marginBottom: "1rem" }}
-        />
+        <Image src="/logo.png" height={96.9238} width={250} alt="logo" />
         <h6
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: "0.1rem",
+            marginLeft: "66px",
           }}
         >
           powered by{" "}
