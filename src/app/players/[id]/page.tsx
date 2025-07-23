@@ -1,6 +1,7 @@
 import { fetchMatches } from "@/actions/fetchMatches";
 import Avatar from "@/components/Avatar";
 import { calculatePlayerStats } from "@/components/UsersTable";
+import Link from "next/link";
 import { Fragment } from "react";
 
 export default async function PlayerPage({
@@ -38,6 +39,33 @@ export default async function PlayerPage({
         maxWidth: "600px",
       }}
     >
+      <div
+        className="breadcrumbs"
+        style={{
+          marginBottom: "1rem",
+          fontSize: "0.9rem",
+          color: "#a4a4a4",
+        }}
+      >
+        <Link
+          href="/"
+          style={{
+            textDecoration: "underline",
+          }}
+        >
+          Główna
+        </Link>{" "}
+        &gt;
+        <span
+          style={{
+            marginLeft: "0.5rem",
+            color: "#fff",
+            fontWeight: "bold",
+          }}
+        >
+          {playerName}
+        </span>
+      </div>
       <div
         style={{
           display: "flex",
