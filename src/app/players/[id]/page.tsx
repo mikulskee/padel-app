@@ -134,7 +134,7 @@ export default async function PlayerPage({
               return (
                 <Fragment key={match.id}>
                   <tr>
-                    <td style={{ width: "15%" }}>{match.date}</td>
+                    <td style={{ width: "15%", fontSize: 10 }}>{match.date}</td>
                     <td style={{ width: "25%" }}>
                       {[...match.players["1"]]
                         .sort((a, b) => a.localeCompare(b))
@@ -188,7 +188,7 @@ export default async function PlayerPage({
                           );
                         })}
                     </td>
-                    <td style={{ textAlign: "right", width: "10%" }}>
+                    <td style={{ textAlign: "right", width: "8%" }}>
                       {hasPlayerWon ? (
                         <span
                           style={{
@@ -243,9 +243,7 @@ export default async function PlayerPage({
               colSpan={5}
               style={{ textAlign: "right", fontWeight: "bold" }}
             ></td>
-            <td
-              style={{ textAlign: "center", fontWeight: "bold", width: "10%" }}
-            >
+            <td style={{ textAlign: "center", width: "10%" }}>
               {matches
                 .filter(
                   (match) =>
