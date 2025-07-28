@@ -77,12 +77,12 @@
       "date": "2025-07-27",
       "id": "match-007",
       "score": {
-        "1": 0,
-        "2": 2
+        "1": 2,
+        "2": 0
       },
       "players": {
-        "1": ["M. Wasilewski", "L. Mikulski"],
-        "2": ["M. Blaza", "M. Mikulski"]
+        "1": ["M. Blaza", "M. Mikulski"],
+        "2": ["M. Wasilewski", "L. Mikulski"]
       }
     }
   ]
