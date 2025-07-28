@@ -38,78 +38,62 @@ const getLastModifiedDate = async (): Promise<string | null> => {
   return `${dateFormatted} o godz. ${time}`;
 };
 
+export const pointsMap: Record<string, { win: number; lose: number }> = {
+  "2:0": { win: 25, lose: 5 },
+  "2:1": { win: 20, lose: 10 },
+  "1:2": { win: 10, lose: 20 },
+  "0:2": { win: 5, lose: 25 },
+};
 export const calculatePlayerStats = (matches: Match[]): PlayerStats[] => {
   const statsMap: Record<string, PlayerStats> = {};
+
+  const awardPoints = (
+    players: string[],
+    points: number,
+    setsWon: number,
+    setsLost: number
+  ) => {
+    for (const player of players) {
+      if (!statsMap[player]) {
+        statsMap[player] = {
+          name: player,
+          wins: 0,
+          losses: 0,
+          points: 0,
+          matches: 0,
+          setsWon: 0,
+          setsLost: 0,
+        };
+      }
+
+      const stats = statsMap[player];
+      stats.matches += 1;
+      stats.points += points;
+      stats.setsWon += setsWon;
+      stats.setsLost += setsLost;
+
+      if (points > 12.5) {
+        stats.wins += 1;
+      } else {
+        stats.losses += 1;
+      }
+    }
+  };
 
   matches.forEach((match) => {
     const score1 = match.score["1"];
     const score2 = match.score["2"];
+    const team1 = match.players["1"];
+    const team2 = match.players["2"];
 
-    const resultKey = `${score1}:${score2}`;
+    const key = `${score1}:${score2}`;
     const reverseKey = `${score2}:${score1}`;
 
-    const pointsMap: Record<string, { win: number; lose: number }> = {
-      "2:0": { win: 25, lose: 5 },
-      "2:1": { win: 20, lose: 10 },
-      "1:2": { win: 10, lose: 20 },
-      "0:2": { win: 5, lose: 25 },
-    };
+    const team1Points = pointsMap[key] || { win: 0, lose: 0 };
+    const team2Points = pointsMap[reverseKey] || { win: 0, lose: 0 };
 
-    const isTeam1Winner = score1 > score2;
-    const team1Players = match.players["1"];
-    const team2Players = match.players["2"];
-
-    const sets = {
-      "1": score1,
-      "2": score2,
-    };
-
-    const getPoints = () => {
-      const key = pointsMap[resultKey]
-        ? resultKey
-        : pointsMap[reverseKey]
-        ? reverseKey
-        : null;
-      return key ? pointsMap[key] : { win: 0, lose: 0 };
-    };
-
-    const { win, lose } = getPoints();
-
-    const awardPoints = (
-      players: string[],
-      isWinner: boolean,
-      teamKey: "1" | "2"
-    ) => {
-      const opponentKey = teamKey === "1" ? "2" : "1";
-      for (const player of players) {
-        if (!statsMap[player]) {
-          statsMap[player] = {
-            name: player,
-            wins: 0,
-            losses: 0,
-            points: 0,
-            matches: 0,
-            setsWon: 0,
-            setsLost: 0,
-          };
-        }
-
-        statsMap[player].matches += 1;
-        statsMap[player].points += isWinner ? win : lose;
-
-        if (isWinner) {
-          statsMap[player].wins += 1;
-        } else {
-          statsMap[player].losses += 1;
-        }
-
-        statsMap[player].setsWon += sets[teamKey];
-        statsMap[player].setsLost += sets[opponentKey];
-      }
-    };
-
-    awardPoints(team1Players, isTeam1Winner, "1");
-    awardPoints(team2Players, !isTeam1Winner, "2");
+    awardPoints(team1, team1Points.win, score1, score2);
+    awardPoints(team2, team2Points.win, score2, score1);
   });
 
   return Object.values(statsMap).sort((a, b) => b.points - a.points);
