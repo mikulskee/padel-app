@@ -210,7 +210,7 @@ export async function UsersTable({ matches }: { matches: Match[] }) {
           fontSize: "0.6rem",
           fontStyle: "italic",
           fontWeight: 700,
-          color: "#dfdfdf",
+          opacity: 0.7,
         }}
       >
         Zaktualizowano - {lastModified || "brak danych"}.
@@ -221,7 +221,7 @@ export async function UsersTable({ matches }: { matches: Match[] }) {
           fontSize: "0.6rem",
           fontStyle: "italic",
           fontWeight: 700,
-          color: "#dfdfdf",
+          opacity: 0.7,
         }}
       >
         Punktacja: 2:0 - 25.00 pkt | 2:1 - 20.00 pkt | 1:2 - 10.00 pkt | 0:2 -

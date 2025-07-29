@@ -79,13 +79,13 @@ export default async function PlayerPage({
         style={{
           marginBottom: "1rem",
           fontSize: "0.9rem",
-          color: "#a4a4a4",
         }}
       >
         <Link
           href="/"
           style={{
             textDecoration: "underline",
+            color: "#a4a4a4",
           }}
         >
           Główna
@@ -94,7 +94,6 @@ export default async function PlayerPage({
         <span
           style={{
             marginLeft: "0.5rem",
-            color: "#fff",
             fontWeight: "bold",
           }}
         >
@@ -199,6 +198,7 @@ export default async function PlayerPage({
                             width: 20,
                             height: 20,
                             marginLeft: "auto",
+                            color: "white",
                           }}
                         >
                           Z
@@ -213,6 +213,7 @@ export default async function PlayerPage({
                             width: 20,
                             height: 20,
                             marginLeft: "auto",
+                            color: "white",
                           }}
                         >
                           P
