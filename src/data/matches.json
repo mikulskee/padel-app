@@ -96,6 +96,18 @@
         "1": ["M. Blaza", "L. Mikulski"],
         "2": ["K. Kyrcz", "M. Mikulski"]
       }
+    },
+    {
+      "date": "2025-08-04",
+      "id": "match-009",
+      "score": {
+        "1": 0,
+        "2": 2
+      },
+      "players": {
+        "1": ["K. Kyrcz", "M. Wasilewski"],
+        "2": ["M. Blaza", "M. Mikulski"]
+      }
     }
   ]
 }
