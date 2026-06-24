@@ -1,60 +1,20 @@
 import { fetchMatches } from "@/actions/fetchMatches";
-import Avatar from "@/components/Avatar";
-import ResultsTable from "@/components/ResultsTable";
-import TeamsTable from "@/components/TeamsTable";
-import { UsersTable } from "@/components/UsersTable";
-import Image from "next/image";
+import Dashboard from "@/components/Dashboard";
+import { filterMatchesByYear, getAvailableYears, getCurrentYear } from "@/lib/seasons";
 
 export default async function Home() {
-  const matches = await fetchMatches();
+	const allMatches = await fetchMatches();
+	const currentYear = getCurrentYear();
 
-  return (
-    <main
-      style={{
-        padding: "2rem 1rem",
-        display: "flex",
-        flexDirection: "column",
-        margin: "0 auto",
-        maxWidth: "600px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginBottom: "2rem",
-        }}
-      >
-        <Image src="/logo.png" height={96.9238} width={250} alt="logo" />
-        <h6
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.1rem",
-            marginLeft: "66px",
-          }}
-        >
-          powered by{" "}
-          <a
-            href="https://transwell.pl"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/transwell.png"
-              alt="Transwell"
-              width={60}
-              height={15}
-            />
-          </a>
-        </h6>
-      </div>
+	const matches = filterMatchesByYear(allMatches, currentYear);
+	const availableYears = getAvailableYears(allMatches);
 
-      <UsersTable matches={matches} />
-      <TeamsTable matches={matches} />
-      <ResultsTable matches={matches} />
-    </main>
-  );
+	return (
+		<Dashboard
+			matches={matches}
+			activeYear={currentYear}
+			currentYear={currentYear}
+			availableYears={availableYears}
+		/>
+	);
 }
